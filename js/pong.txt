@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ping Pong</title>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <!-- <script src="pingpong.js" type="text/javascript"></script> -->
+
+    <script type="text/javascript">
+        const WIDTH = 400,
+            HEIGHT = 450,
+            paddleWidth = 90,
+            paddleHeight = 15;
+        const canvas = document.getElementById('canvas');
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+        canvas.style.background = 'wheat';
+
+        const context = canvas.getContext('2d');
+
+        let player = new Player();
+        let computer = new Computer();
+        let ball = new Ball(WIDTH / 2, HEIGHT / 2, 5);
+
+        function drawGame() {
+            player.drawPlayer();
+            computer.drawComputer();
+            ball.drawBall();
+        }
+        function updateGame() {
+            player.updatePlayer();
+            ball.updateBall(player.paddle, computer.paddle);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.keyCode == 37) {
+                isLeft = true;
+                isRight = false;
+            } else if (event.keyCode == 39) {
+                isLeft = false;
+                isRight = true;
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            isLeft = false;
+            isRight = true;
+        });
+
+        //player function
+        function Player() {
+            //this.paddle = new Paddle(WIDTH / 2 - paddleWidth / 2, HEIGHT - paddleHeight, paddleWidth, paddleHeight);
+            this.paddle = new Paddle(WIDTH / 2 - paddleWidth / 2, HEIGHT - paddleHeight, paddleWidth, paddleHeight);
+            console.log(this.paddle)
+        }
+
+        Player.prototype.drawPlayer = function () {
+            this.paddle.drawPaddle();
+        };
+
+        Player.prototype.updatePlayer = function () {
+            if (isLeft) {
+                this.paddle.updatePaddle(-4);
+            }else if (isRight);{ 
+            this.paddle.updatePaddle(4);
+        }
+    };
+
+        //    Player.prototype.updatePlayer = function() {
+        //       if(isLeft) {
+        //      this.paddle.updatePaddle(-4);
+        //     } else if(isRight) {
+        //           this.paddle.updatePaddle(4);
+        //   }
+        //    };
+
+        //Computer function
+        function Computer() {
+            this.paddle = new Paddle(WIDTH / 2 - paddleWidth / 2, 0, paddleWidth, paddleHeight);
+
+        }
+
+        Computer.prototype.drawComputer = function () {
+            this.paddle.drawPaddle();
+        };
+
+        //paddle function
+        function Paddle(x, y, paddleWidth, paddleHeight) {
+            this.x = x;
+            this.y = y;
+            this.width = paddleWidth;
+            this.height = paddleHeight;
+            this.xDirSpeed = 0;
+        }
+
+        Paddle.prototype.drawPaddle = function () {
+            context.beginPath();
+            context.fillStyle = "#00CC00";
+            context.fillRect(this.x, this.y, this.width, this.height);
+            context.closePath();
+        };
+
+        Paddle.prototype.updatePaddle = function (x) {
+            this.x += x;
+            this.xDirSpeed = x;
+            if (this.x < 0) {
+                this.x = 0;
+                this.xDirSpeed = 0;
+            } else if (this.x + this.width > WIDTH) {
+                this.x = WIDTH - this.width;
+                this.xDirSpeed = 0;
+            }
+        };
+       /*  Paddle.prototype.updatePaddle = function (x) {
+            this.x += x;
+            this.xDirSpeed = x;
+            if (this.x < 0) {
+                this.x = 0;
+                this.xDirSpeed = 0;
+            } else if (this.x + this.width > WIDTH) {
+                this.x = WIDTH - this.width;
+                this.xDirSpeed = 0;
+            }
+        }; */
+
+        //Ball function
+        function Ball(x, y, radius) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.xDirSpeed = Math.random() < 0.5 ? (Math.floor(Math.random() * 3) + 1) : -(Math.floor(Math.random() * 3) + 1);
+            this.yDirSpeed = Math.random() < 0.5 ? (Math.floor(Math.random() * 3) + 1) : -(Math.floor(Math.random() * 3) + 1);
+        }
+
+        Ball.prototype.drawBall = function () {
+            context.beginPath();
+            context.fillStyle = "#FF0C00";
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            context.fill();
+            context.closePath();
+        };
+
+        Ball.prototype.updateBall = function (playerPaddle, computerPaddle) {
+            this.x += this.xDirSpeed;
+            this.y += this.yDirSpeed;
+
+            //Check if ball hits left or right side  of canvas
+            if ((this.x - this.xDirSpeed) < 0) {
+                this.xDirSpeed = -this.xDirSpeed;
+            } else if ((this.x + this.radius) > WIDTH) {
+                this.xDirSpeed = -this.xDirSpeed;
+            }
+
+            // check if ball has hit the paddle
+            if ((this.x + this.radius) > playerPaddle.x && (this.x - this.radius) < (playerPaddle.x + playerPaddle.width) &&
+                (this.y + this.radius) > (HEIGHT - paddleHeight)) {
+                debugger;
+                this.xDirSpeed += playerPaddle.xDirSpeed / 2;
+                this.yDirSpeed = -this.yDirSpeed;
+                this.y += this.yDirSpeed;
+            } else if ((this.x + this.radius) > computerPaddle.x && (this.x - this.radius) < (computerPaddle.x + computerPaddle.width) &&
+                (this.y - this.radius) < (paddleHeight)) {
+                this.xDirSpeed += playerPaddle.xDirSpeed / 2;
+                this.yDirSpeed = -this.yDirSpeed;
+                this.y += this.yDirSpeed;
+            }
+
+            //Chek if ball has missed to hit the paddle
+            if (((this.x + this.radius) < playerPaddle.x) || ((this.x - this.radius) > (playerPaddle.x + playerPaddle.width))) {
+                if ((this.y + this.radius) > HEIGHT) {
+                    console.log("Computer win the game");
+                    this.x = WIDTH / 2;
+                    this.y = HEIGHT / 2;
+                    this.xDirSpeed = Math.random() < 0.5 ? (Math.floor(Math.random() * 3) + 1) : -(Math.floor(Math.random() * 3) + 1);
+
+                    this.yDirSpeed = Math.random() < 0.5 ? (Math.floor(Math.random() * 3) + 1) : -(Math.floor(Math.random() * 3) + 1);
+                }
+            } else if (((this.x + this.radius) < computerPaddle.x) || ((this.x - this.radius) > (computerPaddle.x + computerPaddle.width))) {
+                if (this.y - this.radius < 0) {
+                    console.log("win the game");
+                    this.x = WIDTH / 2;
+                    this.y = HEIGHT / 2;
+                    this.xDirSpeed = Math.random() < 0.5 ? (Math.floor(Math.random() * 3) + 1) : -(Math.floor(Math.random() * 3) + 1);
+                }
+            }
+        };
+
+        function loop() {
+            context.clearRect(0, 0, WIDTH, HEIGHT);
+            drawGame();
+            updateGame();
+
+            requestAnimationFrame(loop);
+        }
+        loop();
+
+    </script>
+</body>
+
+</html>
