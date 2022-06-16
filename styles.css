@@ -9,3 +9,20 @@ body {
 canvas {
     margin-top: 50px;
 }
+
+.hidden{
+    display:none;
+}
+
+.gameOverTitle{
+    color:red;
+}
+
+.red{
+    color:red
+}
+
+.btn{
+    width:200px;
+    color: green;
+}
