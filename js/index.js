@@ -60,6 +60,8 @@ function renderCanvas() {
     context.font="32px Courier New"
     context.fillText(playerScore, 20, canvas.height/2 + 50);
     context.fillText(computerScore, 20, canvas.height / 2 - 30)
+    console.log(computerScore);
+    console.log(playerScore);
 
 
 }
@@ -79,6 +81,7 @@ function ballReset() {
 }
 
 function ballBoundaries() {
+    
     if(ballX < 0 && speedX < 0) {
         speedX = -speedX;
     }
@@ -96,7 +99,9 @@ function ballBoundaries() {
         speedX = trajectoryX * 0.3;
         } else if(ballY > height) {
             ballReset();
+            
             computerScore++;
+            // console.log(computerScore);
         }     
         
 
@@ -112,6 +117,8 @@ function ballBoundaries() {
         }else if(ballY < 0) {
             ballReset();
             playerScore++;
+            // console.log(playerScore);
+// console.log(computerScore)
         }
         
     }
@@ -134,7 +141,11 @@ function animate(){
     renderCanvas();
     ballMove();
     computerPaddle();
-    window.requestAnimationFrame(animate);
+    const endGame = window.requestAnimationFrame(animate);
+}
+
+function stopAnimate (){
+    window.cancelAnimationFrame(endGame);
 }
 
 function createCanvas(){
@@ -148,9 +159,14 @@ function createCanvas(){
 function startGame(){
     createCanvas();
     animate();
-
-    playerScore = 0;
-    computerScore = 0;
+// console.log(playerScore);
+// onsole.log(computerScore)
+    // playerScore = 0;
+    // computerScore = 0;
+    if (computerScore === 5) {
+        stopAnimate()
+        
+    }
 
 
     canvas.addEventListener('mousemove', (e) => {
