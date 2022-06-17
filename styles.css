@@ -3,8 +3,18 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-image: url("./pong.jpeg");
+    background-size: cover;
+    text-align: center;
 }
 
+.start{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
 
 canvas {
     margin-top: 50px;
@@ -21,8 +31,8 @@ canvas {
 .red{
     color:red
 }
-
 .btn{
-    width:200px;
+    width: 100px;
     color: green;
+    margin: 0 auto;
 }

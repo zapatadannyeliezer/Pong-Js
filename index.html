@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +8,21 @@
     <title>Document</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
+    <div id="startDiv" class="start">
+        <h1 id="gameOverTitle" class="red">OTRO-PING PONG</h1>
+        <button id="startingButton" class="btn">Start</button>
+    </div>
+    <div id="endingDiv" class="hidden start">
+        <h1 id="gameOverTitle" class="red">GAME OVER</h1>
+        <p id="whowon" class="red"></p>
+        <button id="endingButton">Ir a menu</button>
+    </div>
+    <div id="container" class="hidden">
+        <canvas id="canvas" class="hidden"></canvas>
+    </div>
     <script src="./script.js" defer></script>
 </body>
+
 </html>
